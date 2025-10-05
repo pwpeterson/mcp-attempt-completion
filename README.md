@@ -57,7 +57,19 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "completion-service": {
+    "mcp-attempt-completion": {
+      "command": "/absolute/path/to/project/.venv/bin/python",
+      "args": ["/absolute/path/to/project/mcp_attempt_completion.py"]
+    }
+  }
+}
+```
+
+Or if using system Python:
+```json
+{
+  "mcpServers": {
+    "mcp-attempt-completion": {
       "command": "python",
       "args": ["/absolute/path/to/mcp_attempt_completion.py"]
     }
@@ -69,9 +81,9 @@ For quiet mode (no logging), add the `--quiet` flag:
 ```json
 {
   "mcpServers": {
-    "completion-service": {
-      "command": "python",
-      "args": ["/absolute/path/to/mcp_attempt_completion.py", "--quiet"]
+    "mcp-attempt-completion": {
+      "command": "/absolute/path/to/project/.venv/bin/python",
+      "args": ["/absolute/path/to/project/mcp_attempt_completion.py", "--quiet"]
     }
   }
 }
@@ -81,9 +93,9 @@ Or use the environment variable:
 ```json
 {
   "mcpServers": {
-    "completion-service": {
-      "command": "python",
-      "args": ["/absolute/path/to/mcp_attempt_completion.py"],
+    "mcp-attempt-completion": {
+      "command": "/absolute/path/to/project/.venv/bin/python",
+      "args": ["/absolute/path/to/project/mcp_attempt_completion.py"],
       "env": {
         "MCP_QUIET": "1"
       }
