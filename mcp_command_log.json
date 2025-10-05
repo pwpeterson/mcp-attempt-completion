@@ -8,5 +8,99 @@
     "returncode": 0,
     "destructive": false,
     "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:52:19.220832+00:00",
+    "command": "ls -la context_portal/",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:52:27.819558+00:00",
+    "command": "find . -name '*.db' -ls",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:52:31.888503+00:00",
+    "command": "pwd && whoami && ls -la",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:55:15.250856+00:00",
+    "command": "ls -la conport-context/ && find . -name '*.db' -exec ls -la {} \\;",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:56:05.791171+00:00",
+    "command": "touch conport-context/context.db && chmod 666 conport-context/context.db && ls -la conport-context/",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:57:44.799884+00:00",
+    "command": "ls -la conport-context/ && file conport-context/context.db && sqlite3 conport-context/context.db '.tables' 2>&1",
+    "command_type": "bash",
+    "status": "executed",
+    "success": false,
+    "returncode": 127,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:57:55.504257+00:00",
+    "command": "find . -name '*conport*' -o -name '*context*' | grep -v '.git' && ls -la .roo/ | grep -i conport",
+    "command_type": "bash",
+    "status": "executed",
+    "success": false,
+    "returncode": 1,
+    "destructive": false,
+    "confirmed": false
+  },
+  {
+    "timestamp": "2025-10-05T17:58:06.254988+00:00",
+    "command": "rm -rf conport-context && mkdir -p context_portal && touch context_portal/context.db && chmod 666 context_portal/context.db && ls -la context_portal/",
+    "command_type": "bash",
+    "status": "awaiting_confirmation",
+    "destructive": true
+  },
+  {
+    "timestamp": "2025-10-05T17:58:10.907567+00:00",
+    "command": "rm -rf conport-context && mkdir -p context_portal && touch context_portal/context.db && chmod 666 context_portal/context.db && ls -la context_portal/",
+    "command_type": "bash",
+    "status": "executed",
+    "success": true,
+    "returncode": 0,
+    "destructive": true,
+    "confirmed": true
+  },
+  {
+    "timestamp": "2025-10-05T18:02:07.373291+00:00",
+    "command": "rm -f context_portal/context.db && chmod 777 context_portal/",
+    "command_type": "bash",
+    "status": "blocked",
+    "reason": "Command is explicitly blocked"
   }
 ]
