@@ -1,0 +1,89 @@
+# MCP Servers — Compact, Action-Oriented Reference
+
+Use this concise reference for connected MCP servers and how to invoke tools. It preserves exact server names, groups tools by purpose, and includes minimal usage examples.
+
+## How to use
+- Invoke tools with use_mcp_tool. Include all required params in arguments (JSON).
+- Access resources with access_mcp_resource when a server exposes URIs.
+- Use exact server_name keys shown below.
+- Execute one tool call at a time and wait for confirmation before the next.
+
+## Global MCP Servers
+- github.com/AgentDeskAI/browser-tools-mcp (npx -y @agentdeskai/browser-tools-mcp)
+  - Browser diagnostics: getConsoleLogs, getConsoleErrors, getNetworkLogs, getNetworkErrors, wipeLogs, getSelectedElement
+  - Audits: runAccessibilityAudit, runPerformanceAudit, runSEOAudit
+  - Actions: takeScreenshot, runDebuggerMode, runAuditMode
+
+- github.com/zcaceres/fetch-mcp (node /home/pwp/srv/coding_agent/mcp/fetch-mcp/dist/index.js)
+  - Fetch: fetch_html, fetch_markdown, fetch_txt, fetch_json
+
+- crawl4ai-rag (SSE http://localhost:8051/sse)
+  - Crawl/RAG: crawl_single_page, smart_crawl_url, get_available_sources, perform_rag_query
+  - Dev utils: search_code_examples (auto-allowed), check_ai_script_hallucinations
+  - Graph: query_knowledge_graph, parse_github_repository
+
+- github (docker run ghcr.io/github/github-mcp-server)
+  - Issues/PRs: create_issue, get_issue, list_issues, create_pull_request, get_pull_request, list_pull_requests
+  - Code/files: get_file_contents, create_or_update_file, search_repositories
+  - Inbox: list_notifications
+
+- filesystem (npx -y @modelcontextprotocol/server-filesystem /home/pwp)
+  - FS: list_directory, read_text_file, write_file, edit_file, create_directory, search_files, get_file_info
+
+- brave-search (npx -y @modelcontextprotocol/server-brave-search)
+  - Search: brave_Web Search, brave_local_search
+
+- sequentialthinking (npx -y @modelcontextprotocol/server-sequential-thinking)
+  - Reasoning: sequentialthinking
+
+- context7 (npx -y @upstash/context7-mcp)
+  - Libraries: resolve-library-id, get-library-docs
+
+- puppeteer (npx -y @modelcontextprotocol/server-puppeteer)
+  - Browser control: puppeteer_navigate, puppeteer_screenshot, puppeteer_click, puppeteer_fill, puppeteer_evaluate
+
+- sqlite (uvx mcp-server-sqlite --db-path /home/pwp/srv/databases/sqlite/mytest.db)
+  - SQL: read_query, write_query, create_table, list_tables, describe_table
+
+## Project MCP Server
+- conport (uvx --from context-portal-mcp conport-mcp --mode stdio)
+  - Product/Active context: get_product_context, update_product_context, get_active_context, update_active_context, get_item_history
+  - Decisions: log_decision, get_decisions, search_decisions_fts, delete_decision_by_id
+  - Progress: log_progress, get_progress, update_progress, delete_progress_by_id, get_recent_activity_summary
+  - System patterns: log_system_pattern, get_system_patterns, delete_system_pattern_by_id
+  - Custom data: log_custom_data, get_custom_data, delete_custom_data, search_custom_data_value_fts, search_project_glossary_fts
+  - Relations/semantics: link_conport_items, get_linked_items, semantic_search_conport
+  - Batch/IO: batch_log_items, export_conport_to_markdown, import_markdown_to_conport
+
+## MCP Tool Usage
+
+### use_mcp_tool
+- Description: Execute a tool on a connected MCP server
+- Parameters:
+  - server_name: exact server key
+  - tool_name: tool to run
+  - arguments: JSON object with required params
+
+Example:
+<use_mcp_tool>
+<server_name>conport</server_name>
+<tool_name>log_decision</tool_name>
+<arguments>{"workspace_id":"${workspaceFolder}","summary":"Decision summary","rationale":"Why this decision was made"}</arguments>
+</use_mcp_tool>
+
+### access_mcp_resource
+- Description: Access a resource exposed by a server
+- Parameters:
+  - server_name: exact server key
+  - uri: resource URI (e.g., file://)
+
+Example:
+<access_mcp_resource>
+<server_name>filesystem</server_name>
+<uri>file://${workspaceFolder}/README.md</uri>
+</access_mcp_resource>
+
+## Notes
+- Exact server names must match your MCP client registration.
+- If your actual sqlite path is spelled “sqllite”, update the sqlite entry accordingly.
+- Keep secrets (e.g., API tokens) out of this document; load via environment at runtime.

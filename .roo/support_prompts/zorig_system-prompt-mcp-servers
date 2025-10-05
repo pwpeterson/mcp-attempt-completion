@@ -1,0 +1,156 @@
+MCP SERVERS
+
+The Model Context Protocol (MCP) enables communication between the system and MCP servers that provide additional tools and resources.
+
+# Connected MCP Servers
+
+## github.com/AgentDeskAI/browser-tools-mcp (`npx -y @agentdeskai/browser-tools-mcp`)
+
+### Available Tools
+- getConsoleLogs: Check browser logs
+- getConsoleErrors: Check browser console errors
+- getNetworkErrors: Check network ERROR logs
+- getNetworkLogs: Check ALL network logs
+- takeScreenshot: Take a screenshot of the current browser tab
+- getSelectedElement: Get the selected element from the browser
+- wipeLogs: Wipe all browser logs from memory
+- runAccessibilityAudit: Run an accessibility audit on the current page
+- runPerformanceAudit: Run a performance audit on the current page
+- runSEOAudit: Run an SEO audit on the current page
+- runDebuggerMode: Run debugger mode to debug an issue in the application
+- runAuditMode: Run audit mode to optimize the application
+
+## github.com/zcaceres/fetch-mcp (`node /home/pwp/srv/coding_agent/mcp/fetch-mcp/dist/index.js`)
+
+### Available Tools
+- fetch_html: Fetch a website and return the content as HTML
+- fetch_markdown: Fetch a website and return the content as Markdown
+- fetch_txt: Fetch a website and return content as plain text
+- fetch_json: Fetch a JSON file from a URL
+
+## crawl4ai-rag (SSE Server at `http://localhost:8051/sse`)
+
+### Available Tools
+- crawl_single_page: Crawl a single web page and store content in database
+- smart_crawl_url: Intelligently crawl URLs based on type (sitemaps, text files, webpages)
+- get_available_sources: Get all available sources from the database
+- perform_rag_query: Perform RAG query on stored content
+- search_code_examples: Search for code examples relevant to query (always allowed)
+- check_ai_script_hallucinations: Check AI-generated scripts for hallucinations
+- query_knowledge_graph: Query and explore the Neo4j knowledge graph
+- parse_github_repository: Parse GitHub repository into knowledge graph
+
+## github (`docker run ghcr.io/github/github-mcp-server`)
+
+### Available Tools
+- create_issue: Create a new issue in a GitHub repository
+- get_issue: Get details of a specific issue
+- list_issues: List issues in a repository
+- create_pull_request: Create a new pull request
+- get_pull_request: Get details of a pull request
+- list_pull_requests: List pull requests in a repository
+- get_file_contents: Get contents of a file from a repository
+- create_or_update_file: Create or update a file in a repository
+- search_repositories: Find repositories by name or description
+- list_notifications: List GitHub notifications
+
+## filesystem (`npx -y @modelcontextprotocol/server-filesystem /home/pwp`)
+
+### Available Tools
+- read_text_file: Read complete contents of a file as text
+- write_file: Create or overwrite a file with new content
+- edit_file: Make line-based edits to a text file
+- list_directory: Get detailed listing of files and directories
+- create_directory: Create a new directory
+- search_files: Recursively search for files matching a pattern
+- get_file_info: Retrieve detailed metadata about a file
+
+## brave-search (`npx -y @modelcontextprotocol/server-brave-search`)
+
+### Available Tools
+- brave_web_search: Perform web search using Brave Search API
+- brave_local_search: Search for local businesses and places
+
+## sequentialthinking (`npx -y @modelcontextprotocol/server-sequential-thinking`)
+
+### Available Tools
+- sequentialthinking: Detailed tool for dynamic problem-solving through sequential thoughts
+
+## context7 (`npx -y @upstash/context7-mcp`)
+
+### Available Tools
+- resolve-library-id: Resolve package name to Context7-compatible library ID
+- get-library-docs: Fetch up-to-date documentation for a library
+
+## puppeteer (`npx -y @modelcontextprotocol/server-puppeteer`)
+
+### Available Tools
+- puppeteer_navigate: Navigate to a URL
+- puppeteer_screenshot: Take screenshot of current page or element
+- puppeteer_click: Click an element on the page
+- puppeteer_fill: Fill out an input field
+- puppeteer_evaluate: Execute JavaScript in browser console
+
+## sqlite (`uvx mcp-server-sqlite --db-path /home/pwp/srv/databases/sqllite/mytest.db`)
+
+### Available Tools
+- read_query: Execute a SELECT query on the SQLite database
+- write_query: Execute INSERT, UPDATE, or DELETE query
+- create_table: Create a new table in the database
+- list_tables: List all tables in the database
+- describe_table: Get schema information for a table
+
+## conport (`uvx context-portal-mcp`)
+
+### Available Tools
+- get_product_context: Get product context information
+- update_product_context: Update product context (full or patch)
+- get_active_context: Get active context information
+- update_active_context: Update active context (full or patch)
+- log_decision: Log a decision with summary and rationale
+- get_decisions: Get logged decisions with optional filters
+- search_decisions_fts: Search decisions by keywords
+- delete_decision_by_id: Delete a decision by ID
+- log_progress: Log progress with description and status
+- get_progress: Get progress data with optional filters
+- update_progress: Update existing progress entry
+- delete_progress_by_id: Delete progress entry by ID
+- log_system_pattern: Log system patterns with description
+- get_system_patterns: Get system patterns with optional filters
+- delete_system_pattern_by_id: Delete system pattern by ID
+- log_custom_data: Log custom data by category and key
+- get_custom_data: Get custom data by category and key
+- delete_custom_data: Delete custom data by category and key
+- search_custom_data_value_fts: Search custom data values by keywords
+- search_project_glossary_fts: Search project glossary specifically
+- semantic_search_conport: Perform semantic search across ConPort data
+- link_conport_items: Create relationships between ConPort items
+- get_linked_items: Get relationships for a specific item
+- get_item_history: Get version history for product/active context
+- batch_log_items: Log multiple items of same type at once
+- get_recent_activity_summary: Get summary of recent activities
+- export_conport_to_markdown: Export ConPort data to markdown
+- import_markdown_to_conport: Import markdown data to ConPort
+
+# MCP Tool Usage
+
+## use_mcp_tool
+Description: Use a tool provided by a connected MCP server
+Parameters:
+- server_name: (required) Name of the MCP server providing the tool
+- tool_name: (required) Name of the tool to execute
+- arguments: (required) JSON object containing tool parameters
+
+Usage:
+<use_mcp_tool>
+<server_name>conport</server_name>
+<tool_name>log_decision</tool_name>
+<arguments>{"workspace_id": "/home/pwp/srv/apps/testapp", "summary": "Decision summary", "rationale": "Why this decision was made"}</arguments>
+</use_mcp_tool>
+
+## access_mcp_resource
+Description: Access a resource provided by a connected MCP server
+Parameters:
+- server_name: (required) Name of the MCP server providing the resource
+- uri: (required) URI identifying the specific resource
+

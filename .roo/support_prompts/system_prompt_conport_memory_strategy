@@ -1,0 +1,57 @@
+# --- ConPort Memory Strategy (Reduced) ---
+conport_memory_strategy:
+  initialization:
+    - step: 1
+      action: "Get workspace_id from current directory"
+    - step: 2  
+      action: "Check for context_portal/context.db"
+      tool: "list_directory"
+      path: "${workspace_id}/context_portal/"
+    - step: 3
+      conditions:
+        - if_found: "context.db"
+          then: "load_existing_context"
+        - else: "handle_new_setup"
+
+  load_existing_context:
+    actions:
+      - "get_product_context, get_active_context"
+      - "get_decisions (limit 5), get_progress (limit 5)"
+      - "Set status [CONPORT_ACTIVE]"
+      - "ask_followup_question: Continue previous task? Review activity? New task?"
+
+  handle_new_setup:
+    actions:
+      - "ask_followup_question: Initialize ConPort database?"
+      - if_yes: "Try bootstrap from projectBrief.md, set [CONPORT_ACTIVE]"
+      - if_no: "Set [CONPORT_INACTIVE]"
+
+  general:
+    status_prefix: "Begin responses with [CONPORT_ACTIVE] or [CONPORT_INACTIVE]"
+    proactive_logging: "Identify opportunities to log decisions/progress during conversation"
+
+  core_tools:
+    context:
+      - get_product_context: "Overall project info"
+      - update_product_context: "Major project changes"
+      - get_active_context: "Current session focus"
+      - update_active_context: "Current task changes"
+    logging:
+      - log_decision: "Architectural/implementation decisions"
+      - log_progress: "Task status changes (TODO/IN_PROGRESS/DONE)"
+      - log_custom_data: "Other project info (glossary, specs, notes)"
+    retrieval:
+      - get_decisions, get_progress: "Recent items"
+      - search_decisions_fts, search_custom_data_value_fts: "Keyword search"
+      - semantic_search_conport: "Conceptual queries"
+      - get_linked_items: "Related items"
+
+  sync_routine:
+    trigger: "^(Sync ConPort|ConPort Sync)$"
+    actions:
+      - "Send [CONPORT_SYNCING]"
+      - "Review chat for new decisions, progress, context changes"
+      - "Update ConPort with identified changes"
+      - "Resume previous task"
+
+  workspace_id_note: "All ConPort calls require workspace_id parameter"
