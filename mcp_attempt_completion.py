@@ -14,11 +14,14 @@ import logging
 # Configure logging based on environment variable or command line argument
 def setup_logging(quiet: bool = False):
     """Setup logging configuration"""
-    if quiet or os.getenv('MCP_QUIET', '').lower() in ('1', 'true', 'yes'):
+    # Check LOGGING_ON environment variable first
+    logging_on = os.getenv('LOGGING_ON', 'true').lower()
+    
+    if quiet or logging_on in ('false', '0', 'no', 'off'):
         # Disable all logging
         logging.basicConfig(level=logging.CRITICAL + 1)
     else:
-        # Normal logging
+        # Normal logging (default when LOGGING_ON is 'true' or not set)
         logging.basicConfig(level=logging.INFO)
     return logging.getLogger(__name__)
 
@@ -159,7 +162,7 @@ async def main():
     logger = setup_logging(quiet=args.quiet)
     
     server = MCPServer()
-    if not args.quiet and not os.getenv('MCP_QUIET'):
+    if not args.quiet and os.getenv('LOGGING_ON', 'true').lower() not in ('false', '0', 'no', 'off'):
         logger.info("MCP Completion Service started")
     
     try:

@@ -97,7 +97,22 @@ Or use the environment variable:
       "command": "/absolute/path/to/project/.venv/bin/python",
       "args": ["/absolute/path/to/project/mcp_attempt_completion.py"],
       "env": {
-        "MCP_QUIET": "1"
+        "LOGGING_ON": "false"
+      }
+    }
+  }
+}
+```
+
+To enable logging (default behavior):
+```json
+{
+  "mcpServers": {
+    "mcp-attempt-completion": {
+      "command": "/absolute/path/to/project/.venv/bin/python",
+      "args": ["/absolute/path/to/project/mcp_attempt_completion.py"],
+      "env": {
+        "LOGGING_ON": "true"
       }
     }
   }
@@ -222,10 +237,11 @@ python mcp_attempt_completion.py -q
 
 **Environment Variable:**
 ```bash
-# Disable logging via environment variable
-MCP_QUIET=1 python mcp_attempt_completion.py
-MCP_QUIET=true python mcp_attempt_completion.py
-MCP_QUIET=yes python mcp_attempt_completion.py
+# Enable logging (default)
+LOGGING_ON=true python mcp_attempt_completion.py
+
+# Disable logging
+LOGGING_ON=false python mcp_attempt_completion.py
 ```
 
 **Programmatic Control:**
@@ -233,7 +249,10 @@ You can also modify the `setup_logging()` function to customize logging behavior
 
 ```python
 def setup_logging(quiet: bool = False):
-    if quiet:
+    # Check LOGGING_ON environment variable first
+    logging_on = os.getenv('LOGGING_ON', 'true').lower()
+    
+    if quiet or logging_on in ('false', '0', 'no', 'off'):
         logging.basicConfig(level=logging.CRITICAL + 1)  # Disable all
     else:
         logging.basicConfig(level=logging.INFO)  # Normal logging
