@@ -6,12 +6,24 @@ MCP Service implementing attempt_completion tool
 import asyncio
 import json
 import sys
+import os
+import argparse
 from typing import Any, Dict, List, Optional, Union
 import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Configure logging based on environment variable or command line argument
+def setup_logging(quiet: bool = False):
+    """Setup logging configuration"""
+    if quiet or os.getenv('MCP_QUIET', '').lower() in ('1', 'true', 'yes'):
+        # Disable all logging
+        logging.basicConfig(level=logging.CRITICAL + 1)
+    else:
+        # Normal logging
+        logging.basicConfig(level=logging.INFO)
+    return logging.getLogger(__name__)
+
+# Will be initialized in main()
+logger = None
 
 
 class MCPServer:
@@ -52,7 +64,8 @@ class MCPServer:
                 return self._error_response(request_id, f"Unknown method: {method}")
                 
         except Exception as e:
-            logger.error(f"Error handling request: {e}")
+            if logger and logger.isEnabledFor(logging.ERROR):
+                logger.error(f"Error handling request: {e}")
             return self._error_response(request.get("id"), str(e))
     
     def _handle_initialize(self, request_id: Union[str, int, None]) -> Dict[str, Any]:
@@ -97,7 +110,8 @@ class MCPServer:
         result = arguments.get("result", "")
         
         # Log the completion attempt
-        logger.info(f"Task completion attempted with result: {result}")
+        if logger and logger.isEnabledFor(logging.INFO):
+            logger.info(f"Task completion attempted with result: {result}")
         
         # You can add custom logic here, such as:
         # - Saving results to a file
@@ -133,8 +147,20 @@ class MCPServer:
 
 async def main():
     """Main server loop"""
+    global logger
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='MCP Completion Service')
+    parser.add_argument('--quiet', '-q', action='store_true', 
+                       help='Disable logging output')
+    args = parser.parse_args()
+    
+    # Initialize logging
+    logger = setup_logging(quiet=args.quiet)
+    
     server = MCPServer()
-    logger.info("MCP Completion Service started")
+    if not args.quiet and not os.getenv('MCP_QUIET'):
+        logger.info("MCP Completion Service started")
     
     try:
         # Read from stdin and write to stdout (MCP transport)
@@ -154,14 +180,17 @@ async def main():
                 print(json.dumps(response), flush=True)
                 
             except json.JSONDecodeError as e:
-                logger.error(f"Invalid JSON received: {e}")
+                if logger and logger.isEnabledFor(logging.ERROR):
+                    logger.error(f"Invalid JSON received: {e}")
                 error_response = server._error_response(None, "Invalid JSON")
                 print(json.dumps(error_response), flush=True)
                 
     except KeyboardInterrupt:
-        logger.info("Server shutting down...")
+        if logger and logger.isEnabledFor(logging.INFO):
+            logger.info("Server shutting down...")
     except Exception as e:
-        logger.error(f"Server error: {e}")
+        if logger and logger.isEnabledFor(logging.ERROR):
+            logger.error(f"Server error: {e}")
 
 
 if __name__ == "__main__":

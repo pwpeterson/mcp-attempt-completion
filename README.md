@@ -36,7 +36,16 @@ This service provides a standardized way for AI agents to signal when they have 
 The service runs as a standalone script that communicates via stdin/stdout:
 
 ```bash
-python completion_service.py
+# Normal operation with logging
+python mcp_attempt_completion.py
+
+# Quiet mode (no logging output)
+python mcp_attempt_completion.py --quiet
+# or
+python mcp_attempt_completion.py -q
+
+# Using environment variable to disable logging
+MCP_QUIET=1 python mcp_attempt_completion.py
 ```
 
 ### MCP Client Configuration
@@ -50,7 +59,34 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "completion-service": {
       "command": "python",
-      "args": ["/absolute/path/to/completion_service.py"]
+      "args": ["/absolute/path/to/mcp_attempt_completion.py"]
+    }
+  }
+}
+```
+
+For quiet mode (no logging), add the `--quiet` flag:
+```json
+{
+  "mcpServers": {
+    "completion-service": {
+      "command": "python",
+      "args": ["/absolute/path/to/mcp_attempt_completion.py", "--quiet"]
+    }
+  }
+}
+```
+
+Or use the environment variable:
+```json
+{
+  "mcpServers": {
+    "completion-service": {
+      "command": "python",
+      "args": ["/absolute/path/to/mcp_attempt_completion.py"],
+      "env": {
+        "MCP_QUIET": "1"
+      }
     }
   }
 }
@@ -60,7 +96,7 @@ Add to your `claude_desktop_config.json`:
 
 Configure the service using the command:
 ```bash
-python /path/to/completion_service.py
+python /path/to/mcp_attempt_completion.py
 ```
 
 ### Tool Usage
@@ -158,14 +194,44 @@ class MCPServer:
 
 ## Logging
 
-The service includes comprehensive logging. Set the log level by modifying:
+The service includes comprehensive logging that can be controlled via command line arguments or environment variables.
 
-```python
-logging.basicConfig(level=logging.DEBUG)  # For verbose output
-logging.basicConfig(level=logging.WARNING)  # For minimal output
+### Logging Control
+
+**Command Line:**
+```bash
+# Normal logging (default)
+python mcp_attempt_completion.py
+
+# Disable all logging
+python mcp_attempt_completion.py --quiet
+python mcp_attempt_completion.py -q
 ```
 
-Logs include:
+**Environment Variable:**
+```bash
+# Disable logging via environment variable
+MCP_QUIET=1 python mcp_attempt_completion.py
+MCP_QUIET=true python mcp_attempt_completion.py
+MCP_QUIET=yes python mcp_attempt_completion.py
+```
+
+**Programmatic Control:**
+You can also modify the `setup_logging()` function to customize logging behavior:
+
+```python
+def setup_logging(quiet: bool = False):
+    if quiet:
+        logging.basicConfig(level=logging.CRITICAL + 1)  # Disable all
+    else:
+        logging.basicConfig(level=logging.INFO)  # Normal logging
+        # Or use logging.DEBUG for verbose output
+        # Or use logging.WARNING for minimal output
+```
+
+### What Gets Logged
+
+When logging is enabled, the service logs:
 - Service startup/shutdown
 - Tool execution attempts
 - Error conditions
